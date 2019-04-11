@@ -1,0 +1,10 @@
+body {
+    background: url("./images/watercolour-2477925_960_720.jpg") no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+img {
+    width: 100%;
+}

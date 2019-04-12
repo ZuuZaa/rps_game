@@ -10,51 +10,56 @@
     <link rel="stylesheet" href="assets/style.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <script src="https://www.gstatic.com/firebasejs/4.4.0/firebase.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
 <body>
     <div class="container-fluid">
-        <div class="row align-items-center d-none">
-            <div class="col-9 align-self-center">
-                <div class="form-group form-check">
-                    <label for="uname">Başlamaq üçün adınızı daxil edin</label>
-                    <input type="text" class="form-control" id="uname" w-50 placeholder="adınızı daxil edin"
-                        name="uname" required>
-                    <button type="submit" class="btn btn-info">başla</button>
-                </div>
+        <div class="row align-items-center" id="signin">
+            <div class="col-12 col-md-6 offset-md-4 align-self-center">
+                <form>
+                    <div class="form-group form-check">
+                        <label for="uname">sign in first :)</label>
+                        <input type="text" class="form-control" id="uname" placeholder="type your nickname" name="uname"
+                            required>
+                        <button type="submit" class="btn btn-info" id="start">start</button>
+                    </div>
+                </form>
             </div>
         </div>
+            <div class="row justify-content-center d-none" id="gameZone">
+                <div class="col-4 col-md-2 offset-md-5 pt-2 text-center ">
+                    <div id="img-holder">
+                        <div id="player1"></div>
+                        <img src="./assets/images/rock-paper-scissors-emoji-cartoon-025-512.png">
+                    </div>
+                </div>
+                <div class="col-4 col-md-3 pt-5">
+                    <div id="img-holder" class="score text-center">
 
-        <div class="row justify-content-center">
-            <div class="col-4 col-md-2 offset-md-5 pt-5 text-center ">
-                <div id="img-holder">
-                    <img src="./assets/images/rock-paper-scissors-emoji-cartoon-025-512.png">
+                    </div>
+                </div>
+
+                <div class="col-4 col-md-2 pt-2">
+                    <div id="img-holder">
+                        <div id="player2"></div>
+                        <img src="">
+                    </div>
                 </div>
             </div>
-            <div class="col-4 col-md-3 pt-5">
-                <div id="img-holder">
-
+            <div id="gameZone" class="row d-none">
+                <div class="col-12 col-md-7 offset-md-5 pl-5 pl-md-1 btn-holder text-center">
+                    <button type="button" class="btn btn-info text-centre p-3 m-2 my-btn rounded-circle">
+                        <i class="far fa-hand-rock"></i></button>
+                    <button type="button" class="btn btn-info text-centre p-3 m-2 my-btn rounded-circle">
+                        <i class="far fa-hand-paper"></i></button>
+                    <button type="button" class="btn btn-info text-centre p-3 m-2 my-btn rounded-circle">
+                        <i class="far fa-hand-scissors"></i></button>
                 </div>
             </div>
-
-            <div class="col-4 col-md-2 pt-5">
-                <div id="img-holder">
-                    <img src="">
-                </div>
-            </div>
-        </div>
-
     </div>
-    <div class="row">
-        <div class="col-12 col-md-7 offset-md-5 pl-5 pl-md-1 btn-holder text-center">
-            <button type="button" class="btn btn-info text-centre p-3 m-2 my-btn rounded-circle">
-                <i class="far fa-hand-rock"></i></button>
-            <button type="button" class="btn btn-info text-centre p-3 m-2 my-btn rounded-circle">
-                <i class="far fa-hand-paper"></i></button>
-            <button type="button" class="btn btn-info text-centre p-3 m-2 my-btn rounded-circle">
-                <i class="far fa-hand-scissors"></i></button>
-        </div>
-    </div>
+    <script src="./assets/game.js"></script>
 </body>
 
 </html>

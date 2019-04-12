@@ -1,10 +1,18 @@
 body {
-    background: url("./images/watercolour-2477925_960_720.jpg") no-repeat center center fixed; 
+    background: url("./images/border-png-images-10.png") no-repeat top left fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
 }
+#img-holder {
+    background-color: rgba(191, 235, 70, 0.418);
+    height: 100%;
+    border-radius: 10px;
+}
 img {
     width: 100%;
+}
+.btn-holder {
+    opacity: 0.8;
 }

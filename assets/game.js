@@ -10,33 +10,61 @@ var config = {
 firebase.initializeApp(config);
 
 var database = firebase.database()
+var player1 = null
+var player2 = null
 
-var choose = ""
-var wins = 0
+function setPlayer1Name() {
+    $("#player1").html($("#uname").val())
+    $(".score").html("welcome,   " + $("#uname").val() + "  !" + "<br>" + "waiting for Player2")
 
-function setUsers() {
-    database.ref().on("value", function (snapshot) {
-        console.log(snapshot.val())
-        if (snapshot.val() == null) {
-            database.ref("/player1/").set({
-                name: $("#uname").val()
-            })
-            $("#player1").html($("#uname").val())
-            $(".score").html("welcome,   " + $("#uname").val() +"  !"+ "<br>" + "waiting for Player2")
-        }/* else if (snapshot.val().player2 == undefined) {
-            database.ref("/player2/").set({
-                name: $("#uname").val()
-            })
-            $("#player1").html($("#uname").val())
-        }*/
-    })
+}
+function setPlayer2Name() {
+    $("#player2").html($("#uname").val())
+    $(".score").html("welcome,   " + $("#uname").val() + "  !" + "<br>" + "Let's gooooo")
 }
 
 
+
+function checkUsers() {
+    if (player1 == null) {
+        player1 = $("#uname").val()
+        database.ref("/player1/").set({
+            name: player1,
+            wins: 0,
+            losses: 0,
+            choice: null
+        })
+        setPlayer1Name()
+
+    } else if (player2 == null) {
+        player2 = $("#uname").val()
+        database.ref("/player2/").set({
+            name: $("#uname").val(),
+            wins: 0,
+            losses: 0,
+            choice: null
+        })
+        setPlayer2Name()
+    }
+}
+
+database.ref().on("value", function (snapshot) {
+    console.log(snapshot.val())
+    if (snapshot.val()) {
+        if (snapshot.val().player1) {
+            player1 = snapshot.val().player1
+        }
+        if (snapshot.val().player2) {
+            player2 = snapshot.val().player2
+        }
+    }
+})
+
 $("form").on("submit", function (e) {
     e.preventDefault()
-    setUsers()
+    checkUsers()
+
     $("#signin").addClass("d-none")
     $("#gameZone").removeClass("d-none")
-
 })
+

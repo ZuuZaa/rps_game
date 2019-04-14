@@ -5,6 +5,13 @@ body {
     -o-background-size: cover;
     background-size: cover;
 }
+#uname {
+    width: 50%;
+    margin-left: 20%;
+}
+#start {
+    width: 30%;
+}
 #img-holder {
     background-color: rgba(191, 235, 70, 0.418);
     height: 100%;
@@ -15,4 +22,10 @@ img {
 }
 .btn-holder {
     opacity: 0.8;
+}
+.my-btn {
+    border-radius: 15px;
+}
+.my-icon {
+    font-size: 2em;
 }

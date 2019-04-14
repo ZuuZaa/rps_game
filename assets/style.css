@@ -12,10 +12,13 @@ body {
 #start {
     width: 30%;
 }
-#img-holder {
+.img-holder {
     background-color: rgba(191, 235, 70, 0.418);
     height: 100%;
     border-radius: 10px;
+}
+#score {
+    
 }
 img {
     width: 100%;

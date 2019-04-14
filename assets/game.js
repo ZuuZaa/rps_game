@@ -51,24 +51,26 @@ function setPlayer1Name() {
         alert("1")
         $("#player1").html($("#uname").val())
         $("#player2").html("waiting for Player2")
-        $(".score").html("welcome,   " + $("#uname").val() + "  !")
+        $("#score").html("welcome,   " + $("#uname").val() + "  !")
         $("#player1img").attr("src", "assets/images/emoji-clipart-595626-5131388.png")
-    }
-    
+}
 }
 function setPlayer2Name() {
     alert("2")
     $("#player1").html(player1.name)
     $("#player1img").attr("src", "assets/images/emoji-clipart-595626-5131388.png")
     $("#player2").html($("#uname").val())
-    $(".score").html("welcome,   " + $("#uname").val() + "  !" + "<br>" + "Let's gooooo")
+    $("#score").html("welcome,   " + $("#uname").val() + "  !" + "<br>" + "Let's gooooo!")
     $("#player2img").attr("src", "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png")
+
 }
 function nameSet() {
 
     if (player2 != null && key2 == null) {
         $("#player2").html(player2.name)
         $("#player2img").attr("src", "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png")
+        alert("2 joined")
+        $("#score").html( player2.name + "   joined." + "<br>" + "Let's gooooo!")
         alert("player 2 is ready")
     }
 

@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="col-4 col-md-3 pt-5">
-                <div id="score" class="img-holder pt-5 text-center" >
+                <div id="score" class="img-holder pt-5 text-center">
 
                 </div>
             </div>
@@ -53,7 +53,7 @@
             </div>
         </div>
         <div class="row d-none" id="gameButtons">
-            <div  class="col-12 col-md-7 offset-md-5 pl-5 pl-md-1 btn-holder text-center ">
+            <div class="col-12 col-md-7 offset-md-5 pl-5 pl-md-1 btn-holder text-center mt-md-3">
                 <button data-name="rock" type="button" class="btn my-btn btn-info text-centre p-3 m-2 my-btn">
                     <i class="far fa-hand-rock my-icon"></i></button>
                 <button data-name="paper" type="button" class="btn my-btn btn-info text-centre p-3 m-2 my-btn">
@@ -62,7 +62,17 @@
                     <i class="far fa-hand-scissors my-icon"></i></button>
             </div>
         </div>
-    </div>[]
+        <div id="chatBox" class="row">
+            <div class="col-12 col-md-7 offset-md-4 mt-md-5">
+                <div id="chat"></div>
+                <form>
+                    <input type="textarea" class="form-control float-left" id="newMessage" placeholder="new message"
+                        name="message" required>
+                    <button type="submit" class="btn btn-info" id="send">send</button>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="./assets/game.js"></script>
 </body>
 

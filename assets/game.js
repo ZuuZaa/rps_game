@@ -18,6 +18,8 @@ var choice1 = null
 var choice2 = null
 var win1 = 0
 var win2 = 0
+var message1 = null
+var message2 = null 
 
 var winners = {
     rock: "assets/images/rock-paper-scissors-emoji-cartoon-027-512.png",
@@ -207,7 +209,15 @@ $(".my-btn").on("click", function () {
         showImage()
         checkScore()
     }
+})
+$("#send").on("submid", function (e){
+    e.preventDefault()
 
-
+        database.ref("messages").push({
+            message: $("#newMessage").val()
+        })
+    var messageText = $("<div> calss='message'")
+    messageText.html(message)
+    $("#chat").prepend(messageText)
 })
 

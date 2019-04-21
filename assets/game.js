@@ -12,14 +12,11 @@ firebase.initializeApp(config);
 var database = firebase.database()
 var player1 = null
 var player2 = null
-var key1 = null
-var key2 = null
-var choice1 = null
-var choice2 = null
+var key = null
 var win1 = 0
 var win2 = 0
 var message1 = null
-var message2 = null 
+var message2 = null
 
 var winners = {
     rock: "assets/images/rock-paper-scissors-emoji-cartoon-027-512.png",
@@ -32,16 +29,80 @@ var loosers = {
     scissors: "assets/images/rock-paper-scissors-emoji-cartoon-009-512.png"
 }
 
-function checkUsers() {
+window.onload = function () {
+    database.ref().set(
+        null
+    )
+}
+
+
+database.ref().on("value", function (snapshot) {
+    player1 = snapshot.val().player1
+    player2 = snapshot.val().player2
+    setName()
+})
+
+function setUsers() {
+
+    if (!player1) {
+        database.ref("/player1/").set({
+            name: $("#uname").val(),
+            choice: " ",
+            win: win1
+        })
+        key = "first"
+    } else if (!player2) {
+        database.ref("/player2/").set({
+            name: $("#uname").val(),
+            choice: " ",
+            win: win2
+        })
+        key = "second"
+    }
+
+}
+function setName() {
+    if (!player2) {
+        $("#player1").html($("#uname").val())
+        $("#player2").html("waiting for Player2")
+        $("#score").html("welcome,   " + $("#uname").val() + "  !")
+        $("#player1img").attr("src", "assets/images/emoji-clipart-595626-5131388.png")
+    } else {
+        alert("player2")
+        $("#player1").html(player1.name)
+        $("#player1img").attr("src", "assets/images/emoji-clipart-595626-5131388.png")
+        $("#player2").html(player2.name)
+        $("#score").html("welcome,   " + player2.name + "  !" + "<br>" + "Let's gooooo!")
+        $("#player2img").attr("src", "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png")
+    }
+
+}
+
+
+$("form").on("submit", function (e) {
+    e.preventDefault()
+    setUsers()
+    $("#signin").addClass("d-none")
+    $("#welcomeText").addClass("d-none")
+    $("#gameZone").removeClass("d-none")
+    $("#gameButtons").removeClass("d-none")
+})
+
+
+
+
+
+
+/*function checkUsers() {
     if (player1 == null) {
         player1 = $("#uname").val()
         database.ref("/player1/").set({
             name: player1,
-            choice: choice1,
+            choice:"",
             win: win1
         })
-        window.localStorage.setItem("player", "player1")
-        key1 = window.localStorage.getItem("player")
+       // window.localStorage.setItem("player", "player1")
+        key1 = "player1"
         setPlayer1Name()
 
     } else if (player2 == null) {
@@ -51,8 +112,8 @@ function checkUsers() {
             choice: choice2,
             win: win2
         })
-        window.localStorage.setItem("player", "player2")
-        key2 = window.localStorage.getItem("player")
+       // window.localStorage.setItem("player", "player2")
+        key2 = "player2"
         setPlayer2Name()
     }
 }
@@ -83,7 +144,7 @@ function nameSet() {
         if (win1 ==0 && win2 == 0 && choice1 == null && choice2 == null) {
             $("#score").html(player2.name + "   joined." + "<br>" + "Let's gooooo!")
         }else  {
-            showScore()
+        //    showScore()
         }
     }
 }
@@ -92,6 +153,7 @@ function showImage() {
         $("#player1img").attr("src", winners[choice1])
     }
     if (key1 == null && choice2 != null && choice1 == null) {
+
         $("#player2img").attr("src", winners[choice2])
     }
 }
@@ -159,7 +221,6 @@ function resetChoices() {
         choice: null
     })
 }
-
 database.ref().on("value", function (snapshot) {
     console.log(snapshot.val())
     if (snapshot.val()) {
@@ -175,23 +236,24 @@ database.ref().on("value", function (snapshot) {
         }
     }
     nameSet()
+    if (choice1 == "scissors" && choice2 == "paper" || choice1 == "rock" && choice2 == "scissors" || choice1 == "paper" && choice2 == "rock" ) {
+        $("#player1img").attr("src", winners[choice1])
+        $("#player2img").attr("src", loosers[choice2])
+    } else if (choice1 == "scissors" && choice2 == "rock" || choice1 == "rock" && choice2 == "paper" || choice1 == "paper" && choice2 == "scissors" ) {
+        $("#player1img").attr("src", loosers[choice1])
+        $("#player2img").attr("src", winners[choice2])
+    } else {
+        $("#player1img").attr("src", winners[choice1])
+        $("#player2img").attr("src", winners[choice2])
+        $("#score").html("00PS!" + "<br>" + "DRAW  :)")
+    }
 })
 
-$("form").on("submit", function (e) {
-    e.preventDefault()
-    checkUsers()
 
-    $("#signin").addClass("d-none")
-    $("#welcomeText").addClass("d-none")
-    $("#gameZone").removeClass("d-none")
-    $("#gameButtons").removeClass("d-none")
-})
 
 $(".my-btn").on("click", function () {
     if (choice1 != null && choice2 != null) {
-        if (key1 == null || key2 == null) {
             resetChoices()
-        }
     }
     if (player1 != null && player2 != null) {
         if (key2 == null) {
@@ -216,8 +278,10 @@ $("#send").on("submid", function (e){
         database.ref("messages").push({
             message: $("#newMessage").val()
         })
-    var messageText = $("<div> calss='message'")
+    var messageText = $("<div> class='message'")
     messageText.html(message)
     $("#chat").prepend(messageText)
 })
 
+
+}*/

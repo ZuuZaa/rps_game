@@ -36,20 +36,25 @@ var loosers = {
 
 window.onload = function () {
     database.ref().set(
-        null
+       {start: 0 }
     )
 }
 
 database.ref().on("value", function (snapshot) {
-    player1 = snapshot.val().player1
-    player2 = snapshot.val().player2
-    choice1 = player1.choice
-    choice2 = player2.choice
-    win1 = player1.win
-    win2 = player2.win
-    img1 = player1.img
-    img2 = player2.img
-    score = snapshot.val().score
+    if (snapshot.val().player1) {
+        player1 = snapshot.val().player1
+        choice1 = player1.choice
+        win1 = player1.win
+        img1 = player1.img
+        score = snapshot.val().score
+    }
+    if (snapshot.val().player2) {
+        player2 = snapshot.val().player2
+        choice2 = player2.choice   
+        win2 = player2.win
+        img2 = player2.img
+        score = snapshot.val().score
+    }
     setName()
 })
 
@@ -150,8 +155,19 @@ function setWin() {
 }
 
 function reset() {
-
-}
+    $(".my-btn").attr("data-value", "true")
+    database.ref().update({
+        score: "Let's play again ;)"
+    })
+    database.ref("/player1/").update({
+        img: "assets/images/emoji-clipart-595626-5131388.png",
+        choice: " "
+    })
+    database.ref("/player2/").update({
+        img: "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png",
+        choice: " "
+    })
+}  
 
 $("form").on("submit", function (e) {
     e.preventDefault()
@@ -180,7 +196,7 @@ $(".my-btn").on("click", function () {
                 $("#player2img").attr("src", winners[choice2])
             }
             setWin()
-            //setTimeOut( reset, 3000)
+            setTimeout( reset, 10000)
         }
     }
 })

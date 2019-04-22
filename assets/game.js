@@ -18,7 +18,6 @@ var choice2 = " "
 var img1 = "assets/images/emoji-clipart-595626-5131388.png"
 var img2 = "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png"
 var score = " "
-var winner = false
 var win1 = 0
 var win2 = 0
 var message1 = null
@@ -41,7 +40,6 @@ window.onload = function () {
     )
 }
 
-
 database.ref().on("value", function (snapshot) {
     player1 = snapshot.val().player1
     player2 = snapshot.val().player2
@@ -52,12 +50,10 @@ database.ref().on("value", function (snapshot) {
     img1 = player1.img
     img2 = player2.img
     score = snapshot.val().score
-    winner = snapshot.val().winner
     setName()
 })
 
 function setUsers() {
-    if (!winner) {
         if (!player1) {
             database.ref("/player1/").set({
                 name: $("#uname").val(),
@@ -74,50 +70,59 @@ function setUsers() {
                 img: img2
             })
             database.ref().update({
-                score: "Weolcome,   " + player2.name + "!" + "<br>" + "Let's goooooo!",
-                winner: ""
+                score: "Weolcome,   " + player2.name + "!" + "<br>" + "Let's goooooo!"
             })
             key = "second"
         }
     }
+
+function setName() {
+    if (!player2) {
+        $("#player1").html($("#uname").val())
+        $("#player2").html("waiting for Player2")
+        $("#score").html("welcome,   " + $("#uname").val() + "  !")
+        $("#player1img").attr("src", img1)
+    } else {
+        $("#player1").html(player1.name)
+        $("#player1img").attr("src", img1)
+        $("#player2").html(player2.name)
+        $("#score").html(score)
+        $("#player2img").attr("src", img2)
+        $("#chatBox").removeClass("d-none")
+    }
 }
-    function setName() {
-        if (!player2) {
-            $("#player1").html($("#uname").val())
-            $("#player2").html("waiting for Player2")
-            $("#score").html("welcome,   " + $("#uname").val() + "  !")
-            $("#player1img").attr("src", img1)
-        } else {
-            $("#player1").html(player1.name)
-            $("#player1img").attr("src", img1)
-            $("#player2").html(player2.name)
-            $("#score").html(score)
-            $("#player2img").attr("src", img2)
-            $("#chatBox").removeClass("d-none")
-        }
-    }
-    function player1wins() {
-        console.log ("player1wins")
-        win1++
-        database.ref("/player1/").update({
-            win: win1
-        })
-        database.ref("winner").update({
-            winner: "plyer1"
-        })
-    }
-    function player2wins() {
-        console.log("player2wins")
-        win2++
-        database.ref("/player2/").update({
-            win: win2
-        })
-        database.ref("winner").update({
-            winner: "plyer2"
-        })
-    }
-    function setWin() {
-        console.log("setwins")
+
+function player1wins() {
+    console.log("player1wins")
+    win1++
+    console.log(win1)
+    database.ref("/player1/").update({
+        win: win1,
+        img: winners[choice1]
+    })
+    database.ref("/player2/").update({
+        img: loosers[choice2]
+    })
+    database.ref().update({
+        score: player1.name + "  wins." + "<br>" + player1.name +": "+ win1 + "<br>" + player2.name + ": " + win2
+    })
+}
+function player2wins() {
+    console.log("player2wins")
+    win2++
+    database.ref("/player2/").update({
+        win: win2,
+        img: winners[choice2]
+    })
+    database.ref("/player1/").update({
+        img: loosers[choice1]
+    })
+    database.ref().update({
+        score: player2.name + "  wins." + "<br>" + player1.name +": "+ win1 + "<br>" + player2.name + ": " + win2
+    })
+}
+function setWin() {
+    if (choice1 != " " && choice2 != " ") {
         if (choice1 == "rock" && choice2 == "scissors") {
             player1wins()
         } else if (choice1 == "scissors" && choice2 == "paper") {
@@ -134,30 +139,48 @@ function setUsers() {
             database.ref().update({
                 winner: "draw"
             })
+            database.ref("/player1/").update({
+                img: winners[choice1]
+            })
+            database.ref("/player2/").update({
+                img: winners[choice2]
+            })
         }
     }
+}
 
-    $("form").on("submit", function (e) {
-        e.preventDefault()
-        setUsers()
-        setName()
-        $("#signin").addClass("d-none")
-        $("#welcomeText").addClass("d-none")
-        $("#gameZone").removeClass("d-none")
-        $("#gameButtons").removeClass("d-none")
-    })
+function reset() {
 
-    $(".my-btn").on("click", function () {
-        if (player2) {
+}
+
+$("form").on("submit", function (e) {
+    e.preventDefault()
+    setUsers()
+    setName()
+    $("#signin").addClass("d-none")
+    $("#welcomeText").addClass("d-none")
+    $("#gameZone").removeClass("d-none")
+    $("#gameButtons").removeClass("d-none")
+})
+
+$(".my-btn").on("click", function () {
+    if (player2) {
+        if ($(this).attr("data-value") == "true") {
             if (key == "first") {
                 database.ref("/player1/").update({
                     choice: $(this).data("name")
                 })
+                $(".my-btn").attr("data-value", "false")
+                $("#player1img").attr("src", winners[choice1])
             } else if (key == "second") {
                 database.ref("/player2/").update({
                     choice: $(this).data("name")
                 })
+                $(".my-btn").attr("data-value", "false")
+                $("#player2img").attr("src", winners[choice2])
             }
             setWin()
+            //setTimeOut( reset, 3000)
         }
-    })
+    }
+})

@@ -10,9 +10,15 @@ var config = {
 firebase.initializeApp(config);
 
 var database = firebase.database()
-var player1 = null
-var player2 = null
+var player1 = false
+var player2 = false
 var key = null
+var choice1 = " "
+var choice2 = " "
+var img1 = "assets/images/emoji-clipart-595626-5131388.png"
+var img2 = "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png"
+var score = " "
+var winner = false
 var win1 = 0
 var win2 = 0
 var message1 = null
@@ -39,249 +45,119 @@ window.onload = function () {
 database.ref().on("value", function (snapshot) {
     player1 = snapshot.val().player1
     player2 = snapshot.val().player2
+    choice1 = player1.choice
+    choice2 = player2.choice
+    win1 = player1.win
+    win2 = player2.win
+    img1 = player1.img
+    img2 = player2.img
+    score = snapshot.val().score
+    winner = snapshot.val().winner
     setName()
 })
 
 function setUsers() {
-
-    if (!player1) {
-        database.ref("/player1/").set({
-            name: $("#uname").val(),
-            choice: " ",
-            win: win1
-        })
-        key = "first"
-    } else if (!player2) {
-        database.ref("/player2/").set({
-            name: $("#uname").val(),
-            choice: " ",
-            win: win2
-        })
-        key = "second"
-    }
-
-}
-function setName() {
-    if (!player2) {
-        $("#player1").html($("#uname").val())
-        $("#player2").html("waiting for Player2")
-        $("#score").html("welcome,   " + $("#uname").val() + "  !")
-        $("#player1img").attr("src", "assets/images/emoji-clipart-595626-5131388.png")
-    } else {
-        alert("player2")
-        $("#player1").html(player1.name)
-        $("#player1img").attr("src", "assets/images/emoji-clipart-595626-5131388.png")
-        $("#player2").html(player2.name)
-        $("#score").html("welcome,   " + player2.name + "  !" + "<br>" + "Let's gooooo!")
-        $("#player2img").attr("src", "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png")
-    }
-
-}
-
-
-$("form").on("submit", function (e) {
-    e.preventDefault()
-    setUsers()
-    $("#signin").addClass("d-none")
-    $("#welcomeText").addClass("d-none")
-    $("#gameZone").removeClass("d-none")
-    $("#gameButtons").removeClass("d-none")
-})
-
-
-
-
-
-
-/*function checkUsers() {
-    if (player1 == null) {
-        player1 = $("#uname").val()
-        database.ref("/player1/").set({
-            name: player1,
-            choice:"",
-            win: win1
-        })
-       // window.localStorage.setItem("player", "player1")
-        key1 = "player1"
-        setPlayer1Name()
-
-    } else if (player2 == null) {
-        player2 = $("#uname").val()
-        database.ref("/player2/").set({
-            name: player2,
-            choice: choice2,
-            win: win2
-        })
-       // window.localStorage.setItem("player", "player2")
-        key2 = "player2"
-        setPlayer2Name()
-    }
-}
-
-function setPlayer1Name() {
-    if (!player2) {
-
-        $("#player1").html($("#uname").val())
-        $("#player2").html("waiting for Player2")
-        $("#score").html("welcome,   " + $("#uname").val() + "  !")
-        $("#player1img").attr("src", "assets/images/emoji-clipart-595626-5131388.png")
-    }
-}
-function setPlayer2Name() {
-
-    $("#player1").html(player1.name)
-    $("#player1img").attr("src", "assets/images/emoji-clipart-595626-5131388.png")
-    $("#player2").html($("#uname").val())
-    $("#score").html("welcome,   " + $("#uname").val() + "  !" + "<br>" + "Let's gooooo!")
-    $("#player2img").attr("src", "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png")
-}
-function nameSet() {
-
-    if (player2 != null && key2 == null) {
-        $("#player2").html(player2.name)
-        $("#player2img").attr("src", "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png")
-
-        if (win1 ==0 && win2 == 0 && choice1 == null && choice2 == null) {
-            $("#score").html(player2.name + "   joined." + "<br>" + "Let's gooooo!")
-        }else  {
-        //    showScore()
+    if (!winner) {
+        if (!player1) {
+            database.ref("/player1/").set({
+                name: $("#uname").val(),
+                choice: choice1,
+                win: win1,
+                img: img1
+            })
+            key = "first"
+        } else if (!player2) {
+            database.ref("/player2/").set({
+                name: $("#uname").val(),
+                choice: choice2,
+                win: win2,
+                img: img2
+            })
+            database.ref().update({
+                score: "Weolcome,   " + player2.name + "!" + "<br>" + "Let's goooooo!",
+                winner: ""
+            })
+            key = "second"
         }
     }
 }
-function showImage() {
-    if (key2 == null && choice1 != null && choice2 == null) {
-        $("#player1img").attr("src", winners[choice1])
-    }
-    if (key1 == null && choice2 != null && choice1 == null) {
-
-        $("#player2img").attr("src", winners[choice2])
-    }
-}
-function checkScore() {
-    if (choice1 != null && choice2 != null) {
-        if (choice1 == "scissors" && choice2 == "rock") {
-            win2++
-            player2Wins()
-
-        } else if (choice1 == "scissors" && choice2 == "paper") {
-            win1++
-            player1Wins()
-
-        } else if (choice1 == "rock" && choice2 == "paper") {
-            win2++
-            player2Wins()
-
-        } else if (choice1 == "rock" && choice2 == "scissors") {
-            win1++
-            player1Wins()
-
-        } else if (choice1 == "paper" && choice2 == "scissors") {
-            win2++
-            player2Wins()
-
-        } else if (choice1 == "paper" && choice2 == "rock") {
-            win1++
-            player1Wins()
+    function setName() {
+        if (!player2) {
+            $("#player1").html($("#uname").val())
+            $("#player2").html("waiting for Player2")
+            $("#score").html("welcome,   " + $("#uname").val() + "  !")
+            $("#player1img").attr("src", img1)
         } else {
-            $("#player1img").attr("src", winners[choice1])
-            $("#player2img").attr("src", winners[choice2])
-            $("#score").html("00PS!" + "<br>" + "DRAW  :)")
+            $("#player1").html(player1.name)
+            $("#player1img").attr("src", img1)
+            $("#player2").html(player2.name)
+            $("#score").html(score)
+            $("#player2img").attr("src", img2)
+            $("#chatBox").removeClass("d-none")
         }
     }
-
-}
-function setWins() {
-    database.ref("/player1/").update({
-        win: win1
-    })
-    database.ref("/player2/").update({
-        win: win2
-    })
-}
-function player1Wins() {
-    setWins()
-    $("#player1img").attr("src", winners[choice1])
-    $("#player2img").attr("src", loosers[choice2])
-    showScore()
-}
-function player2Wins() {
-    setWins()
-    $("#player1img").attr("src", loosers[choice1])
-    $("#player2img").attr("src", winners[choice2])
-    showScore()
-}
-function showScore() {
-    $("#score").html(player1.name + ":  " + win1 + "<br>" + player2.name + ":   " + win2)
-}
-function resetChoices() {
-    database.ref("/player1/").update({
-        choice: null
-    })
-    database.ref("/player2/").update({
-        choice: null
-    })
-}
-database.ref().on("value", function (snapshot) {
-    console.log(snapshot.val())
-    if (snapshot.val()) {
-        if (snapshot.val().player1) {
-            player1 = snapshot.val().player1
-            choice1 = snapshot.val().player1.choice
-            win1 = snapshot.val().player1.win
-        }
-        if (snapshot.val().player2) {
-            player2 = snapshot.val().player2
-            choice2 = snapshot.val().player2.choice
-            win2 = snapshot.val().player2.win
-        }
-    }
-    nameSet()
-    if (choice1 == "scissors" && choice2 == "paper" || choice1 == "rock" && choice2 == "scissors" || choice1 == "paper" && choice2 == "rock" ) {
-        $("#player1img").attr("src", winners[choice1])
-        $("#player2img").attr("src", loosers[choice2])
-    } else if (choice1 == "scissors" && choice2 == "rock" || choice1 == "rock" && choice2 == "paper" || choice1 == "paper" && choice2 == "scissors" ) {
-        $("#player1img").attr("src", loosers[choice1])
-        $("#player2img").attr("src", winners[choice2])
-    } else {
-        $("#player1img").attr("src", winners[choice1])
-        $("#player2img").attr("src", winners[choice2])
-        $("#score").html("00PS!" + "<br>" + "DRAW  :)")
-    }
-})
-
-
-
-$(".my-btn").on("click", function () {
-    if (choice1 != null && choice2 != null) {
-            resetChoices()
-    }
-    if (player1 != null && player2 != null) {
-        if (key2 == null) {
-            choice1 = $(this).data("name")
-            database.ref("/player1/").update({
-                choice: choice1
-            })
-        }
-        if (key1 == null) {
-            choice2 = $(this).data("name")
-            database.ref("/player2/").update({
-                choice: choice2
-            })
-        }
-        showImage()
-        checkScore()
-    }
-})
-$("#send").on("submid", function (e){
-    e.preventDefault()
-
-        database.ref("messages").push({
-            message: $("#newMessage").val()
+    function player1wins() {
+        console.log ("player1wins")
+        win1++
+        database.ref("/player1/").update({
+            win: win1
         })
-    var messageText = $("<div> class='message'")
-    messageText.html(message)
-    $("#chat").prepend(messageText)
-})
+        database.ref("winner").update({
+            winner: "plyer1"
+        })
+    }
+    function player2wins() {
+        console.log("player2wins")
+        win2++
+        database.ref("/player2/").update({
+            win: win2
+        })
+        database.ref("winner").update({
+            winner: "plyer2"
+        })
+    }
+    function setWin() {
+        console.log("setwins")
+        if (choice1 == "rock" && choice2 == "scissors") {
+            player1wins()
+        } else if (choice1 == "scissors" && choice2 == "paper") {
+            player1wins()
+        } else if (choice1 == "paper" && choice2 == "rock") {
+            player1wins()
+        } else if (choice2 == "rock" && choice1 == "scissors") {
+            player2wins()
+        } else if (choice2 == "scissors" && choice1 == "paper") {
+            player2wins()
+        } else if (choice2 == "paper" && choice1 == "rock") {
+            player2wins()
+        } else {
+            database.ref().update({
+                winner: "draw"
+            })
+        }
+    }
 
+    $("form").on("submit", function (e) {
+        e.preventDefault()
+        setUsers()
+        setName()
+        $("#signin").addClass("d-none")
+        $("#welcomeText").addClass("d-none")
+        $("#gameZone").removeClass("d-none")
+        $("#gameButtons").removeClass("d-none")
+    })
 
-}*/
+    $(".my-btn").on("click", function () {
+        if (player2) {
+            if (key == "first") {
+                database.ref("/player1/").update({
+                    choice: $(this).data("name")
+                })
+            } else if (key == "second") {
+                database.ref("/player2/").update({
+                    choice: $(this).data("name")
+                })
+            }
+            setWin()
+        }
+    })

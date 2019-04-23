@@ -12,6 +12,7 @@ firebase.initializeApp(config);
 var database = firebase.database()
 var player1 = false
 var player2 = false
+var playerControl = 0
 var key = null
 var choice1 = " "
 var choice2 = " "
@@ -23,7 +24,6 @@ var win2 = 0
 var message = null
 var bool = "true"
 var game = ""
-
 
 var winners = {
     rock: "assets/images/rock-paper-scissors-emoji-cartoon-027-512.png",
@@ -37,9 +37,12 @@ var loosers = {
 }
 
 window.onbeforeunload = function () {
-    database.ref().set({
-        game: "reload"
-    })
+    if (playerControl == 1) {
+        console.log("Reloda girme")
+        database.ref().set({
+            game: "reload"
+        })
+    }  
 }
 
 database.ref().update({
@@ -47,52 +50,53 @@ database.ref().update({
 })
 
 database.ref().on("value", function (snapshot) {
-        if (snapshot.val().player1){
-            player1 = snapshot.val().player1
-            choice1 = player1.choice
-            win1 = player1.win
-            img1 = player1.img
-            bool = snapshot.val().bool
-            message =snapshot.val().chat
-        }
-        if (snapshot.val().player2){
-            player2 = snapshot.val().player2
-            choice2 = player2.choice   
-            win2 = player2.win
-            img2 = player2.img
-            bool = snapshot.val().bool
-            score = snapshot.val().score
-            message =snapshot.val().chat
-        }
+    if (snapshot.val().player1) {
+        player1 = snapshot.val().player1
+        choice1 = player1.choice
+        win1 = player1.win
+        img1 = player1.img
+        bool = snapshot.val().bool
+        message = snapshot.val().chat
+    }
+    if (snapshot.val().player2) {
+        player2 = snapshot.val().player2
+        choice2 = player2.choice
+        win2 = player2.win
+        img2 = player2.img
+        bool = snapshot.val().bool
+        score = snapshot.val().score
+        message = snapshot.val().chat
+    }
     setName()
     messageMaker()
-    if (snapshot.val().game == "reload"){
+    if (snapshot.val().game == "reload") {
         window.location.reload()
     }
 })
 
 function setUsers() {
-        if (!player1) {
-            database.ref("/player1/").set({
-                name: $("#uname").val(),
-                choice: choice1,
-                win: win1,
-                img: img1
-            })
-            key = "first"
-        } else if (!player2) {
-            database.ref("/player2/").set({
-                name: $("#uname").val(),
-                choice: choice2,
-                win: win2,
-                img: img2
-            })
-            database.ref().update({
-                score: "Weolcome,   " + player2.name + "!" + "<br>" + "Let's goooooo!"
-            })
-            key = "second"
-        }
+    playerControl = 1
+    if (!player1) {
+        database.ref("/player1/").set({
+            name: $("#uname").val(),
+            choice: choice1,
+            win: win1,
+            img: img1
+        })
+        key = "first"
+    } else if (!player2) {
+        database.ref("/player2/").set({
+            name: $("#uname").val(),
+            choice: choice2,
+            win: win2,
+            img: img2
+        })
+        database.ref().update({
+            score: "Weolcome,   " + player2.name + "!" + "<br>" + "Let's goooooo!"
+        })
+        key = "second"
     }
+}
 
 function setName() {
     if (!player2) {
@@ -106,7 +110,6 @@ function setName() {
         $("#player2").html(player2.name)
         $("#score").html(score)
         $("#player2img").attr("src", img2)
-        $("#chatBox").removeClass("d-none")
     }
 }
 
@@ -122,7 +125,7 @@ function player1wins() {
         img: loosers[choice2]
     })
     database.ref().update({
-        score: player1.name + "  wins." + "<br>" + player1.name +": "+ win1 + "<br>" + player2.name + ": " + win2
+        score: player1.name + "  wins." + "<br>" + player1.name + ": " + win1 + "<br>" + player2.name + ": " + win2
     })
 }
 function player2wins() {
@@ -136,7 +139,7 @@ function player2wins() {
         img: loosers[choice1]
     })
     database.ref().update({
-        score: player2.name + "  wins." + "<br>" + player1.name +": "+ win1 + "<br>" + player2.name + ": " + win2
+        score: player2.name + "  wins." + "<br>" + player1.name + ": " + win1 + "<br>" + player2.name + ": " + win2
     })
 }
 function setWin() {
@@ -164,12 +167,12 @@ function setWin() {
                 img: winners[choice2]
             })
         }
-        setTimeout( reset, 5000)
+        setTimeout(reset, 5000)
     }
 }
 
 function reset() {
-   btn()
+    btn()
     database.ref().update({
         score: "Let's play again ;)"
     })
@@ -181,11 +184,11 @@ function reset() {
         img: "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png",
         choice: " "
     })
-}  
-function messageMaker(){
+}
+function messageMaker() {
     if (message != 0) {
         $("#chat").empty()
-        for (i in message){
+        for (i in message) {
             console.log(i)
             var messageBox = $("<div>")
             messageBox.addClass("message-box")
@@ -194,27 +197,33 @@ function messageMaker(){
         }
     }
 }
-function btn(){
+function btn() {
     if ($(".my-btn").attr("data-value") == "true") {
         database.ref().update({
             boll: "false"
-        })    
-    }else {
+        })
+    } else {
         database.ref().update({
             boll: "true"
         })
     }
-   $(".my-btn").attr("data-value", bool)
+    $(".my-btn").attr("data-value", bool)
 }
 
 $("form").on("submit", function (e) {
     e.preventDefault()
-    setUsers()
-    setName()
-    $("#signin").addClass("d-none")
-    $("#welcomeText").addClass("d-none")
-    $("#gameZone").removeClass("d-none")
-    $("#gameButtons").removeClass("d-none")
+    if (player1 && player2) {
+        alert("try later :(")
+    } else {
+        setUsers()
+        setName()
+        $("#signin").addClass("d-none")
+        $("#welcomeText").addClass("d-none")
+        $("#gameZone").removeClass("d-none")
+        $("#gameButtons").removeClass("d-none")
+        $("#chatBox").removeClass("d-none")
+        
+    }
 })
 
 $(".my-btn").on("click", function () {
@@ -238,17 +247,17 @@ $(".my-btn").on("click", function () {
     }
 })
 
-$("#chatform").on("submit", function(){
-    if (key == "first"){
+$("#chatform").on("submit", function () {
+    if (key == "first") {
         database.ref("/chat/").push({
             name: player1.name,
             message: $("#newMessage").val()
         })
-    }else if (key == "second"){
+    } else if (key == "second") {
         database.ref("/chat/").push({
             name: player2.name,
             message: $("#newMessage").val()
         })
-    }  
+    }
     $("#newMessage").val("")
 })

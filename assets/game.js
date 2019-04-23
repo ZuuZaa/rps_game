@@ -22,6 +22,7 @@ var win1 = 0
 var win2 = 0
 var message = null
 var bool = "true"
+var game = ""
 
 
 var winners = {
@@ -35,33 +36,39 @@ var loosers = {
     scissors: "assets/images/rock-paper-scissors-emoji-cartoon-009-512.png"
 }
 
-window.onload = function () {
-    database.ref().set(
-       {chat: 0 }
-    )
+window.onbeforeunload = function () {
+    database.ref().set({
+        game: "reload"
+    })
 }
 
+database.ref().update({
+    game: "onload"
+})
+
 database.ref().on("value", function (snapshot) {
-    if (snapshot.val().player1) {
-        player1 = snapshot.val().player1
-        choice1 = player1.choice
-        win1 = player1.win
-        img1 = player1.img
-        bool = snapshot.val().bool
-        message =snapshot.val().chat
-        score = snapshot.val().score
-    }
-    if (snapshot.val().player2) {
-        player2 = snapshot.val().player2
-        choice2 = player2.choice   
-        win2 = player2.win
-        img2 = player2.img
-        bool = snapshot.val().bool
-        score = snapshot.val().score
-        message =snapshot.val().chat
-    }
+        if (snapshot.val().player1){
+            player1 = snapshot.val().player1
+            choice1 = player1.choice
+            win1 = player1.win
+            img1 = player1.img
+            bool = snapshot.val().bool
+            message =snapshot.val().chat
+        }
+        if (snapshot.val().player2){
+            player2 = snapshot.val().player2
+            choice2 = player2.choice   
+            win2 = player2.win
+            img2 = player2.img
+            bool = snapshot.val().bool
+            score = snapshot.val().score
+            message =snapshot.val().chat
+        }
     setName()
     messageMaker()
+    if (snapshot.val().game == "reload"){
+        window.location.reload()
+    }
 })
 
 function setUsers() {

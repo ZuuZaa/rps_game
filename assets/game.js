@@ -20,8 +20,8 @@ var img2 = "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png"
 var score = " "
 var win1 = 0
 var win2 = 0
-var message1 = null
-var message2 = null
+var message = null
+
 
 var winners = {
     rock: "assets/images/rock-paper-scissors-emoji-cartoon-027-512.png",
@@ -36,7 +36,7 @@ var loosers = {
 
 window.onload = function () {
     database.ref().set(
-       {start: 0 }
+       {chat: 0 }
     )
 }
 
@@ -46,6 +46,7 @@ database.ref().on("value", function (snapshot) {
         choice1 = player1.choice
         win1 = player1.win
         img1 = player1.img
+        message =snapshot.val().chat
         score = snapshot.val().score
     }
     if (snapshot.val().player2) {
@@ -54,8 +55,10 @@ database.ref().on("value", function (snapshot) {
         win2 = player2.win
         img2 = player2.img
         score = snapshot.val().score
+        message =snapshot.val().chat
     }
     setName()
+    messageMaker()
 })
 
 function setUsers() {
@@ -142,7 +145,7 @@ function setWin() {
             player2wins()
         } else {
             database.ref().update({
-                winner: "draw"
+                score: "DRAW"
             })
             database.ref("/player1/").update({
                 img: winners[choice1]
@@ -168,7 +171,21 @@ function reset() {
         choice: " "
     })
 }  
-
+function messageMaker(){
+    console.log("func")
+    if (message != 0) {
+        console.log("if")
+        $("#chat").empty()
+        for (i in message){
+            console.log(i)
+            var messageBox = $("<div>")
+            messageBox.addClass("message-box")
+            messageBox.html(message[i].name + ":    " + message[i].message)
+            $("#chat").prepend(messageBox)
+        }
+    }
+}
+  
 $("form").on("submit", function (e) {
     e.preventDefault()
     setUsers()
@@ -199,4 +216,19 @@ $(".my-btn").on("click", function () {
             setTimeout( reset, 10000)
         }
     }
+})
+
+$("#chatform").on("submit", function(){
+    if (key == "first"){
+        database.ref("/chat/").push({
+            name: player1.name,
+            message: $("#newMessage").val()
+        })
+    }else if (key == "second"){
+        database.ref("/chat/").push({
+            name: player2.name,
+            message: $("#newMessage").val()
+        })
+    }  
+    $("#newMessage").val("")
 })

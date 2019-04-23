@@ -21,6 +21,7 @@ var score = " "
 var win1 = 0
 var win2 = 0
 var message = null
+var bool = "true"
 
 
 var winners = {
@@ -46,6 +47,7 @@ database.ref().on("value", function (snapshot) {
         choice1 = player1.choice
         win1 = player1.win
         img1 = player1.img
+        bool = snapshot.val().bool
         message =snapshot.val().chat
         score = snapshot.val().score
     }
@@ -54,6 +56,7 @@ database.ref().on("value", function (snapshot) {
         choice2 = player2.choice   
         win2 = player2.win
         img2 = player2.img
+        bool = snapshot.val().bool
         score = snapshot.val().score
         message =snapshot.val().chat
     }
@@ -154,11 +157,12 @@ function setWin() {
                 img: winners[choice2]
             })
         }
+        setTimeout( reset, 5000)
     }
 }
 
 function reset() {
-    $(".my-btn").attr("data-value", "true")
+   btn()
     database.ref().update({
         score: "Let's play again ;)"
     })
@@ -172,9 +176,7 @@ function reset() {
     })
 }  
 function messageMaker(){
-    console.log("func")
     if (message != 0) {
-        console.log("if")
         $("#chat").empty()
         for (i in message){
             console.log(i)
@@ -185,7 +187,19 @@ function messageMaker(){
         }
     }
 }
-  
+function btn(){
+    if ($(".my-btn").attr("data-value") == "true") {
+        database.ref().update({
+            boll: "false"
+        })    
+    }else {
+        database.ref().update({
+            boll: "true"
+        })
+    }
+   $(".my-btn").attr("data-value", bool)
+}
+
 $("form").on("submit", function (e) {
     e.preventDefault()
     setUsers()
@@ -203,17 +217,16 @@ $(".my-btn").on("click", function () {
                 database.ref("/player1/").update({
                     choice: $(this).data("name")
                 })
-                $(".my-btn").attr("data-value", "false")
+                btn()
                 $("#player1img").attr("src", winners[choice1])
             } else if (key == "second") {
                 database.ref("/player2/").update({
                     choice: $(this).data("name")
                 })
-                $(".my-btn").attr("data-value", "false")
+                btn()
                 $("#player2img").attr("src", winners[choice2])
             }
             setWin()
-            setTimeout( reset, 10000)
         }
     }
 })

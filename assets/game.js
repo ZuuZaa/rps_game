@@ -214,7 +214,7 @@ function btn() {
     $(".my-btn").attr("data-value", "true")
 }
 
-$("#form").on("submit", function (e) {
+$("#submitform").on("submit", function (e) {
     e.preventDefault()
     if (player1 && player2 && playerControl == 0) {
         alert("Game's fool. Try later :(")
@@ -257,7 +257,8 @@ $(".my-btn").on("click", function () {
     }
 })
 
-$("#chatform").on("submit", function () {
+$("#chatform").on("submit", function (e) {
+    e.preventDefault()
     if (key == "first") {
         database.ref("/chat/").push({
             name: player1.name,

@@ -22,7 +22,8 @@ var score = " "
 var win1 = 0
 var win2 = 0
 var message = null
-var bool = "true"
+var btn1 = " "
+var btn2 = " "
 var game = ""
 
 var winners = {
@@ -42,7 +43,7 @@ window.onbeforeunload = function () {
         database.ref().set({
             game: "reload"
         })
-    }  
+    }
 }
 
 database.ref().update({
@@ -55,7 +56,7 @@ database.ref().on("value", function (snapshot) {
         choice1 = player1.choice
         win1 = player1.win
         img1 = player1.img
-        bool = snapshot.val().bool
+        btn1 = snapshot.val().btn1
         message = snapshot.val().chat
     }
     if (snapshot.val().player2) {
@@ -63,7 +64,7 @@ database.ref().on("value", function (snapshot) {
         choice2 = player2.choice
         win2 = player2.win
         img2 = player2.img
-        bool = snapshot.val().bool
+        btn2= snapshot.val().btn2
         score = snapshot.val().score
         message = snapshot.val().chat
     }
@@ -110,6 +111,7 @@ function setName() {
         $("#player2").html(player2.name)
         $("#score").html(score)
         $("#player2img").attr("src", img2)
+        btn()
     }
 }
 
@@ -144,6 +146,7 @@ function player2wins() {
 }
 function setWin() {
     if (choice1 != " " && choice2 != " ") {
+        btn()
         if (choice1 == "rock" && choice2 == "scissors") {
             player1wins()
         } else if (choice1 == "scissors" && choice2 == "paper") {
@@ -167,6 +170,12 @@ function setWin() {
                 img: winners[choice2]
             })
         }
+        database.ref("/player1/").update({
+            choice: " "
+        })
+        database.ref("/player2/").update({
+            choice: " "
+        })
         setTimeout(reset, 5000)
     }
 }
@@ -177,12 +186,10 @@ function reset() {
         score: "Let's play again ;)"
     })
     database.ref("/player1/").update({
-        img: "assets/images/emoji-clipart-595626-5131388.png",
-        choice: " "
+        img: "assets/images/emoji-clipart-595626-5131388.png"
     })
     database.ref("/player2/").update({
-        img: "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png",
-        choice: " "
+        img: "assets/images/1495750744Winking-emoticon-emoji-Clipart-info.png"
     })
 }
 function messageMaker() {
@@ -198,22 +205,19 @@ function messageMaker() {
     }
 }
 function btn() {
-    if ($(".my-btn").attr("data-value") == "true") {
+    if (btn1 == "false" && btn2 == "false"){
         database.ref().update({
-            boll: "false"
-        })
-    } else {
-        database.ref().update({
-            boll: "true"
+            btn1: "true",
+            btn2: "true"
         })
     }
-    $(".my-btn").attr("data-value", bool)
+    $(".my-btn").attr("data-value", "true")
 }
 
-$("form").on("submit", function (e) {
+$("#form").on("submit", function (e) {
     e.preventDefault()
-    if (player1 && player2) {
-        alert("try later :(")
+    if (player1 && player2 && playerControl == 0) {
+        alert("Game's fool. Try later :(")
     } else {
         setUsers()
         setName()
@@ -222,7 +226,7 @@ $("form").on("submit", function (e) {
         $("#gameZone").removeClass("d-none")
         $("#gameButtons").removeClass("d-none")
         $("#chatBox").removeClass("d-none")
-        
+
     }
 })
 
@@ -233,13 +237,19 @@ $(".my-btn").on("click", function () {
                 database.ref("/player1/").update({
                     choice: $(this).data("name")
                 })
-                btn()
+                database.ref().update({
+                    btn1: "false"
+                })
+                $(".my-btn").attr("data-value", "false")
                 $("#player1img").attr("src", winners[choice1])
             } else if (key == "second") {
                 database.ref("/player2/").update({
                     choice: $(this).data("name")
                 })
-                btn()
+                database.ref().update({
+                    btn2: "false"
+                })
+                $(".my-btn").attr("data-value", "false")
                 $("#player2img").attr("src", winners[choice2])
             }
             setWin()
